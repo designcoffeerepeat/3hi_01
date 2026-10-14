@@ -52,7 +52,7 @@ export function heroIntro(hero, { reduced }) {
       { y: 20, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.08 },
       0.55
     )
-    .from('.nav', { yPercent: -100, duration: 1, ease: 'expo.out' }, 0.2);
+    .from('.nav', { yPercent: -100, duration: 1, ease: 'expo.out', clearProps: 'transform' }, 0.2);
   hero?.intro(0.15);
 }
 
@@ -93,6 +93,8 @@ function heroScroll(hero) {
 }
 
 function reelScroll(reel, mm) {
+  // the tall scroll track only exists when the frame animation runs
+  document.querySelector('.reel')?.classList.add('is-scrubbed');
   mm.add({ portrait: '(max-aspect-ratio: 1/1)', landscape: '(min-aspect-ratio: 1/1)' }, (ctx) => {
     const inset = ctx.conditions.portrait ? '24% 7% 24% 7%' : '28% 30% 28% 30%';
     const tl = gsap.timeline({
@@ -235,7 +237,10 @@ function tickers(lenis) {
     clone.setAttribute('aria-hidden', 'true');
     ticker.append(clone);
     loops.push({
-      tween: gsap.to([track, clone], { xPercent: -100, ease: 'none', duration: 45, repeat: -1 }),
+      tween: gsap
+        .to([track, clone], { xPercent: -100, ease: 'none', duration: 45, repeat: -1 })
+        // start deep into the loop so scrolling up can run it backwards indefinitely
+        .totalTime(45 * 200),
       dir: 1,
     });
   }
@@ -255,6 +260,7 @@ function tickers(lenis) {
       { xPercent: dir > 0 ? 0 : -100 },
       { xPercent: dir > 0 ? -100 : 0, ease: 'none', duration: 28, repeat: -1 }
     );
+    tween.totalTime(28 * 200);
     loops.push({ tween, dir: 1, row });
   });
 
@@ -285,6 +291,8 @@ function tickers(lenis) {
 /** Horizontal "three horizons" track, pinned on larger screens. */
 function method(mm) {
   mm.add('(min-width: 901px)', () => {
+    const section = document.querySelector('.method');
+    section.classList.add('is-horizontal');
     const track = document.querySelector('.method__track');
     const distance = () => track.scrollWidth - window.innerWidth;
     const tween = gsap.to(track, {
@@ -332,6 +340,7 @@ function method(mm) {
         }
       );
     });
+    return () => section.classList.remove('is-horizontal');
   });
 
   mm.add('(max-width: 900px)', () => {

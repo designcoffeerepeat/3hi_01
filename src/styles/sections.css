@@ -146,8 +146,12 @@
 
 /* ============ REEL ============ */
 .reel {
-  height: 240vh;
+  height: 100vh;
+  height: 100svh;
   padding: 0;
+}
+.reel.is-scrubbed {
+  height: 240vh;
 }
 .reel__sticky {
   position: sticky;
@@ -162,7 +166,6 @@
   overflow: hidden;
   background: #050507;
   color: var(--paper);
-  clip-path: inset(30% 30% 30% 30% round 28px);
   will-change: clip-path;
 }
 .reel__canvas {
@@ -422,13 +425,14 @@
 }
 .method__track {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   gap: clamp(16px, 2vw, 28px);
   padding: 96px var(--gutter) 48px;
   will-change: transform;
 }
 .method__intro {
-  flex: 0 0 clamp(300px, 38vw, 640px);
+  flex: 1 1 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -442,11 +446,24 @@
   margin-top: 20px;
 }
 .method__hint {
+  display: none;
   color: var(--muted);
+}
+.method.is-horizontal .method__track {
+  flex-wrap: nowrap;
+}
+.method.is-horizontal .method__intro {
+  flex: 0 0 clamp(300px, 38vw, 640px);
+}
+.method.is-horizontal .horizon {
+  flex: 0 0 clamp(300px, 34vw, 560px);
+}
+.method.is-horizontal .method__hint {
+  display: block;
 }
 .horizon {
   position: relative;
-  flex: 0 0 clamp(300px, 34vw, 560px);
+  flex: 1 1 300px;
   min-height: min(72vh, 640px);
   display: flex;
   flex-direction: column;

@@ -17,8 +17,8 @@ const LANDSCAPE = [
   ['three', -0.36, 0.3, 0.6, 2.5, [0.15, 0.3, -0.12]],
   ['h', 0.04, 0.46, -1.6, 2.2, [0.1, -0.3, 0.1]],
   ['i', 0.34, 0.26, 0.9, 2.0, [0.05, 0.25, -0.25]],
-  ['ring', 0.8, 0.42, -2.2, 2.2, [1.05, 0.3, 0.2]],
-  ['star', -0.78, 0.36, -1.0, 1.75, [0.2, -0.25, 0.3]],
+  ['ring', 0.79, 0.34, -2.2, 2.2, [1.05, 0.3, 0.2]],
+  ['star', -0.8, 0.28, -1.0, 1.7, [0.2, -0.25, 0.3]],
   ['arrow', 0.84, -0.08, 1.2, 1.45, [0.15, -0.3, -0.35]],
   ['bubble', 0.62, -0.58, 0.4, 1.6, [0.1, -0.3, 0.08]],
   ['sparkle', 0.55, 0.7, 0.3, 1.15, [0.2, 0.3, 0.2]],
@@ -105,12 +105,84 @@ export function createHeroScene(canvas, { reduced = false } = {}) {
     pointerDirty: false,
   };
 
+  // Hero copy the objects should never cover. Measured only while the hero sits
+  // at the top of the page, since the copy drifts with scroll.
+  const KEEP_OUT = [
+    '.hero__kicker',
+    '.hero__clocks',
+    '.hero__lede',
+    '.hero__foot .btn',
+    '.hero__scroll',
+    '.nav__logo',
+    '.nav__links',
+    '.nav__cta',
+  ];
+  let keepOut = [];
+  let keepOutStale = true;
+
+  function measureKeepOut() {
+    const c = canvas.getBoundingClientRect();
+    const rel = (r) => ({
+      left: r.left - c.left,
+      top: r.top - c.top,
+      right: r.right - c.left,
+      bottom: r.bottom - c.top,
+    });
+    const rects = [];
+    const range = document.createRange();
+    document.querySelectorAll('[data-hero-line]').forEach((el) => {
+      range.selectNodeContents(el); // the text itself, not the full width block
+      rects.push(rel(range.getBoundingClientRect()));
+    });
+    KEEP_OUT.forEach((sel) =>
+      document.querySelectorAll(sel).forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.width && r.height) rects.push(rel(r));
+      })
+    );
+    keepOut = rects;
+    keepOutStale = false;
+  }
+
+  // distance from a circle to a rect, negative when they overlap (with padding)
+  const gap = (x, y, r, b, pad) => {
+    const cx = THREE.MathUtils.clamp(x, b.left, b.right);
+    const cy = THREE.MathUtils.clamp(y, b.top, b.bottom);
+    return Math.hypot(x - cx, y - cy) - r - pad;
+  };
+
+  /** Shrink, then nudge, an object until it clears the copy. Returns [px, py, size]. */
+  function clearCopy(px, py, size, pxPerUnit, w, h) {
+    const pad = Math.max(10, Math.min(w, h) * 0.018);
+    const radius = () => (size / 2) * pxPerUnit * 0.85;
+    const hit = () => keepOut.find((b) => gap(px, py, radius(), b, pad) < 0);
+    for (let k = 0; k < 4 && hit(); k++) size *= 0.9;
+    for (let k = 0; k < 8; k++) {
+      const b = hit();
+      if (!b) return [px, py, size];
+      // push away from the closest point of the rect (or its centre when inside it)
+      let dx = px - THREE.MathUtils.clamp(px, b.left, b.right);
+      let dy = py - THREE.MathUtils.clamp(py, b.top, b.bottom);
+      if (!dx && !dy) {
+        dx = px - (b.left + b.right) / 2;
+        dy = py - (b.top + b.bottom) / 2;
+      }
+      const len = Math.hypot(dx, dy) || 1;
+      const step = radius() * 0.35;
+      px = THREE.MathUtils.clamp(px + (dx / len) * step, 0, w);
+      py = THREE.MathUtils.clamp(py + (dy / len) * step, 0, h);
+    }
+    return hit() ? [px, py, 0] : [px, py, size];
+  }
+
   function layout() {
     const { clientWidth: w, clientHeight: h } = canvas;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    if (window.scrollY < 5) measureKeepOut();
+    else keepOutStale = true;
     const portrait = w / h < 0.9;
     const rows = portrait ? PORTRAIT : LANDSCAPE;
     const scale = portrait
@@ -122,14 +194,19 @@ export function createHeroScene(canvas, { reduced = false } = {}) {
       const dist = camera.position.z - z;
       const halfH = tanHalf * dist;
       const halfW = halfH * camera.aspect;
-      it.base.set(nx * halfW, ny * halfH, z);
-      it.size = size * scale;
+      let px = (nx * 0.5 + 0.5) * w;
+      let py = (0.5 - ny * 0.5) * h;
+      let s = size * scale;
+      if (s) [px, py, s] = clearCopy(px, py, s, h / 2 / halfH, w, h);
+      it.base.set((px / w) * 2 * halfW - halfW, halfH - (py / h) * 2 * halfH, z);
+      it.size = s;
       it.rot.set(...rot);
       it.depth = THREE.MathUtils.clamp((z + 3.5) / 6, 0, 1); // 0 = far, 1 = near
     });
   }
   layout();
   new ResizeObserver(layout).observe(canvas);
+  document.fonts?.ready.then(layout); // web fonts change the size of the copy
 
   // pointer: parallax target + hover raycasting (the canvas itself ignores pointer events)
   const raycaster = new THREE.Raycaster();
@@ -237,6 +314,7 @@ export function createHeroScene(canvas, { reduced = false } = {}) {
     /** 0 at the top of the page, 1 once the hero has scrolled away. */
     setScroll(p) {
       state.scroll = p;
+      if (p === 0 && keepOutStale) layout(); // resized while away from the top
     },
     /** Objects inflate in, one after another. */
     intro(delay = 0) {

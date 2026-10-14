@@ -40,6 +40,11 @@ function safely(label, fn) {
 }
 
 async function boot() {
+  // Always start at the top so the intro plays and scroll animations measure cleanly.
+  // A #hash in the URL is honoured once everything is set up.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+
   const loader = createLoader({ reduced });
   const lenis = reduced ? null : initSmoothScroll();
 
@@ -86,6 +91,13 @@ async function boot() {
   // created after the pinned section so its pin spacing is taken into account
   initTheme();
   ScrollTrigger.refresh();
+
+  const target =
+    location.hash.length > 1 && safely('hash', () => document.querySelector(location.hash));
+  if (target) {
+    if (lenis) lenis.scrollTo(target, { immediate: true });
+    else target.scrollIntoView();
+  }
 }
 
 boot();
