@@ -1,9 +1,8 @@
 {
   "recommendations": [
+    "astro-build.astro-vscode",
     "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
-    "slevesque.shader",
     "github.vscode-github-actions"
   ]
 }

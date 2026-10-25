@@ -1,12 +1,9 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "[astro]": { "editor.defaultFormatter": "astro-build.astro-vscode" },
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "files.exclude": { "**/node_modules": true },
-  "search.exclude": { "**/node_modules": true, "dist": true, "package-lock.json": true },
-  "eslint.useFlatConfig": true,
-  "css.lint.unknownAtRules": "ignore",
+  "search.exclude": { "**/node_modules": true, "dist": true, ".astro": true, "package-lock.json": true },
   "npm.packageManager": "npm"
 }

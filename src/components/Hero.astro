@@ -1,0 +1,224 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="hero" id="top">
+  <canvas class="hero__canvas" aria-hidden="true" data-hero-canvas></canvas>
+
+  <div class="hero__top wrap">
+    <p class="eyebrow">New wave digital agency</p>
+    <p class="hero__where mono">
+      Los Angeles <span aria-hidden="true">/</span> New York
+    </p>
+  </div>
+
+  <div class="hero__body wrap">
+    <h1 class="display hero__title">
+      <span class="sr-only">{site.tagline}</span>
+      <span class="hero__line serif" aria-hidden="true">
+        <span>It's time to</span>
+      </span>
+      <span class="hero__line" aria-hidden="true">
+        <span>take your place</span>
+      </span>
+      <span class="hero__line" aria-hidden="true">
+        <span>at the top.</span>
+      </span>
+    </h1>
+
+    <div class="hero__foot">
+      <p class="hero__lede">
+        AI, web design, social and search working as one system, so your brand climbs and stays
+        there.
+      </p>
+      <div class="hero__ctas">
+        <a href="#scan" class="btn">
+          <span class="btn__dot" aria-hidden="true"></span>Does AI recommend you?
+        </a>
+        <a href="#contact" class="btn btn--ghost">
+          Talk to us
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <a
+    href="#scan"
+    class="sticker"
+    aria-label="Jump to the free AI visibility scan"
+    data-speed="-0.25"
+  >
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <path id="sticker-circle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1 -88 0"></path>
+      </defs>
+      <text>
+        <textPath href="#sticker-circle" textLength="272" lengthAdjust="spacing">
+          free ai scan &#8226; does ai recommend you? &#8226;{' '}
+        </textPath>
+      </text>
+    </svg>
+    <span class="sticker__arrow" aria-hidden="true">
+      &darr;
+    </span>
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: 96px 40px;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        60% 70% at 72% 40%,
+        color-mix(in srgb, var(--mauve) 35%, transparent),
+        transparent 70%
+      ),
+      var(--paper);
+  }
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero__top,
+  .hero__body {
+    position: relative;
+    pointer-events: none;
+  }
+  .hero__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .hero__body a {
+    pointer-events: auto;
+  }
+  .hero__title {
+    display: grid;
+    margin-bottom: clamp(24px, 3vw, 44px);
+  }
+  .hero__line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+  .hero__line > span {
+    display: inline-block;
+    animation: rise 1.2s var(--ease) both;
+  }
+  .hero__line:nth-child(3) > span {
+    animation-delay: 0.08s;
+  }
+  .hero__line:nth-child(4) > span {
+    animation-delay: 0.16s;
+  }
+  .hero__line.serif {
+    font-size: 0.62em;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .hero__line:last-child {
+    padding-left: 0.9em;
+  }
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    animation: fade 1s 0.5s var(--ease) both;
+  }
+  .hero__lede {
+    max-width: 30ch;
+    font-size: clamp(17px, 1.4vw, 22px);
+    line-height: 1.35;
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sticker {
+    position: absolute;
+    right: calc(var(--gutter) + 2vw);
+    bottom: clamp(150px, 26vh, 260px);
+    width: clamp(96px, 9vw, 132px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--pink);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: 0 10px 30px -10px rgba(12, 12, 14, 0.35);
+    transition: transform 0.5s var(--spring);
+  }
+  .sticker:hover {
+    transform: scale(1.08) rotate(-6deg);
+  }
+  .sticker svg {
+    position: absolute;
+    inset: 0;
+    animation: spin 14s linear infinite;
+  }
+  .sticker text {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    fill: currentColor;
+  }
+  .sticker__arrow {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(105%);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      padding-top: 84px;
+    }
+    .hero__title {
+      font-size: clamp(44px, 13.2vw, 80px);
+    }
+    .hero__line:last-child {
+      padding-left: 0;
+    }
+    .sticker,
+    .hero__where {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { hasWebGL } from '../scripts/webgl';
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  if (canvas && hasWebGL()) {
+    import('../scripts/three/hero').then(({ mountHero }) => mountHero(canvas));
+  }
+</script>

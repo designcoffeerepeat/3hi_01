@@ -17,3 +17,7 @@ npm-debug.log*
 .idea
 .DS_Store
 Thumbs.db
+
+# astro
+.astro
+.env

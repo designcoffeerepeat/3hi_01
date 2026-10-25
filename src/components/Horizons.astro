@@ -1,0 +1,156 @@
+---
+import { horizons } from '../data/site';
+---
+
+<section class="hz" id="horizons" aria-labelledby="hz-title">
+  <div class="hz__scene" aria-hidden="true">
+    <span class="hz__sun" data-speed="0.18"></span>
+    <svg
+      class="hz__layer hz__layer--3"
+      data-speed="0.22"
+      viewBox="0 0 1440 400"
+      preserveAspectRatio="none"
+    >
+      <path d="M0 220C180 140 320 120 480 170s300 90 460 30 320-110 500-60V400H0z"></path>
+    </svg>
+    <svg
+      class="hz__layer hz__layer--2"
+      data-speed="0.12"
+      viewBox="0 0 1440 400"
+      preserveAspectRatio="none"
+    >
+      <path d="M0 260c160-50 300-40 460 0s320 60 520 0 300-80 460-40V400H0z"></path>
+    </svg>
+    <svg
+      class="hz__layer hz__layer--1"
+      data-speed="0.04"
+      viewBox="0 0 1440 400"
+      preserveAspectRatio="none"
+    >
+      <path d="M0 300c220-30 420-20 640 10s420 30 560-10 180-30 240-20V400H0z"></path>
+    </svg>
+  </div>
+
+  <div class="hz__body wrap">
+    <p class="eyebrow" data-reveal>
+      Method
+    </p>
+    <h2 class="title hz__title" id="hz-title" data-reveal>
+      Every project crosses <em class="serif">three</em> horizons.
+    </h2>
+    <ol class="hz__steps">
+      {horizons.map((h, i) => (
+        <li data-reveal style={`--d:${i}`}>
+          <span class="hz__id">{h.id}</span>
+          <h3>{h.title}</h3>
+          <p>{h.body}</p>
+          <span class="mono hz__tag">{h.tag}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .hz {
+    position: relative;
+    margin-top: clamp(40px, 6vw, 80px);
+    padding-block: clamp(90px, 12vw, 180px) clamp(60px, 8vw, 120px);
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 40%, #1b1440 100%);
+    color: var(--paper);
+    overflow: hidden;
+  }
+  .hz__scene {
+    position: absolute;
+    inset: auto 0 0;
+    height: 82%;
+    pointer-events: none;
+  }
+  .hz__sun {
+    position: absolute;
+    left: 74%;
+    bottom: 48%;
+    width: clamp(160px, 22vw, 340px);
+    aspect-ratio: 1;
+    margin-left: calc(clamp(160px, 22vw, 340px) / -2);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #ffd0e6, var(--pink) 60%);
+    box-shadow: 0 0 120px 30px color-mix(in srgb, var(--pink) 40%, transparent);
+  }
+  .hz__layer {
+    position: absolute;
+    left: -2%;
+    width: 104%;
+    max-width: none;
+    bottom: 0;
+    height: 80%;
+  }
+  .hz__layer--3 {
+    fill: var(--mauve);
+    opacity: 0.85;
+  }
+  .hz__layer--2 {
+    fill: var(--blue);
+    height: 66%;
+  }
+  .hz__layer--1 {
+    fill: var(--blue-deep);
+    height: 50%;
+    bottom: -2%;
+  }
+  .hz__body {
+    position: relative;
+  }
+  .hz__title {
+    max-width: 14ch;
+    margin-block: 20px clamp(48px, 7vw, 120px);
+  }
+  .hz__steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(12px, 1.6vw, 24px);
+    padding-top: clamp(60px, 12vw, 200px);
+  }
+  .hz__steps li {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    padding: clamp(20px, 2.4vw, 36px);
+    border-radius: calc(var(--radius) * 0.8);
+    background: color-mix(in srgb, var(--ink) 52%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: inset 0 0 0 1px rgba(242, 240, 235, 0.18);
+  }
+  .hz__id {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(40px, 4vw, 64px);
+    line-height: 1;
+    color: var(--pink);
+  }
+  .hz__steps h3 {
+    font-size: clamp(24px, 2.2vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+  }
+  .hz__steps p {
+    opacity: 0.85;
+    line-height: 1.45;
+  }
+  .hz__tag {
+    margin-top: 8px;
+    opacity: 0.6;
+    font-size: 11px;
+  }
+  @media (max-width: 860px) {
+    .hz__steps {
+      grid-template-columns: 1fr;
+      padding-top: 40vw;
+    }
+    .hz__scene {
+      height: 50%;
+    }
+  }
+</style>

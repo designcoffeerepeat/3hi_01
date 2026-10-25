@@ -1,0 +1,252 @@
+---
+import { site } from '../data/site';
+const topics = [
+  'AI audit',
+  'AI integration',
+  'SEO',
+  'Web design',
+  'Social media',
+  'Growth marketing',
+];
+---
+
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="contact__inner wrap">
+    <div class="contact__copy">
+      <p class="eyebrow" data-reveal>
+        Contact
+      </p>
+      <h2 class="title" id="contact-title" data-reveal>
+        Let's get you to the <em class="serif">top.</em>
+      </h2>
+      <p class="contact__lede" data-reveal style="--d:1">
+        Tell us where you are and where you want to be. A real person replies within one business
+        day.
+      </p>
+      <a class="contact__mail" href={`mailto:${site.email}`} data-reveal style="--d:2">
+        {site.email}
+      </a>
+    </div>
+
+    <form class="form" data-contact-form novalidate data-reveal style="--d:1">
+      <fieldset class="form__topics">
+        <legend class="mono">I'm interested in</legend>
+        {topics.map((t) => (
+          <label class="chip">
+            <input type="checkbox" name="topics" value={t} />
+            <span>{t}</span>
+          </label>
+        ))}
+      </fieldset>
+      <div class="form__grid">
+        <label>
+          <span class="mono">Name</span>
+          <input name="name" autocomplete="name" required />
+        </label>
+        <label>
+          <span class="mono">Email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <label class="form__wide">
+          <span class="mono">Website</span>
+          <input name="website" inputmode="url" autocomplete="url" placeholder="yourwebsite.com" />
+        </label>
+        <label class="form__wide">
+          <span class="mono">Message</span>
+          <textarea name="message" rows="4"></textarea>
+        </label>
+      </div>
+      <div class="form__foot">
+        <button class="btn" type="submit">
+          Send it <span aria-hidden="true">&rarr;</span>
+        </button>
+        <p class="form__status mono" data-form-status role="status"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: clamp(80px, 10vw, 160px);
+    background: var(--pink);
+    color: var(--ink);
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin-top: calc(var(--radius) * -1);
+    position: relative;
+    z-index: 1;
+  }
+  .contact__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 96px);
+    align-items: start;
+  }
+  .contact__copy {
+    display: grid;
+    gap: 22px;
+  }
+  .contact__lede {
+    max-width: 36ch;
+    font-size: clamp(17px, 1.35vw, 21px);
+  }
+  .contact__mail {
+    justify-self: start;
+    font-size: clamp(22px, 2.4vw, 38px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+  }
+  .form {
+    display: grid;
+    gap: 22px;
+    padding: clamp(20px, 3vw, 44px);
+    border-radius: var(--radius);
+    background: var(--paper);
+  }
+  .form__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .form__topics legend {
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .chip input {
+    position: absolute;
+    opacity: 0;
+  }
+  .chip span {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+      background 0.3s,
+      color 0.3s,
+      transform 0.4s var(--spring);
+  }
+  .chip input:checked + span {
+    background: var(--blue);
+    color: var(--paper);
+    box-shadow: none;
+    transform: rotate(-2deg);
+  }
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .form__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .form__wide {
+    grid-column: 1 / -1;
+  }
+  .form label:not(.chip) {
+    display: grid;
+    gap: 6px;
+  }
+  .form label .mono {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .form input:not([type='checkbox']),
+  .form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--paper-2);
+    font-size: 17px;
+    resize: vertical;
+  }
+  .form input:focus,
+  .form textarea:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 0;
+  }
+  .form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .form__status {
+    font-size: 12px;
+  }
+  @media (max-width: 860px) {
+    .contact__inner,
+    .form__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { scrollToEl } from '../scripts/motion';
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]')!;
+  const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+  const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+
+  // The AI scan result hands over the scanned address and ticks "AI audit".
+  addEventListener('contact:prefill', (e) => {
+    const { website, topic } = (e as CustomEvent<{ website: string; topic: string }>).detail;
+    form.querySelector<HTMLInputElement>('[name="website"]')!.value = website;
+    const box = form.querySelector<HTMLInputElement>(`[name="topics"][value="${topic}"]`);
+    if (box) box.checked = true;
+    scrollToEl(form);
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get('name') || '').trim();
+    const email = String(data.get('email') || '').trim();
+    if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
+      status.textContent = 'Please add your name and a valid email.';
+      return;
+    }
+    const payload = {
+      name,
+      email,
+      website: String(data.get('website') || ''),
+      topics: data.getAll('topics').map(String),
+      message: String(data.get('message') || ''),
+    };
+
+    if (endpoint) {
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error();
+        form.reset();
+        status.textContent = 'Thank you. We will be in touch within one business day.';
+        return;
+      } catch {
+        status.textContent = 'That did not go through. Opening your email app instead.';
+      }
+    }
+
+    const lines = [`Name: ${payload.name}`, `Email: ${payload.email}`];
+    if (payload.website) lines.push(`Website: ${payload.website}`);
+    if (payload.topics.length) lines.push(`Interested in: ${payload.topics.join(', ')}`);
+    if (payload.message) lines.push('', payload.message);
+    const body = lines.join('\n');
+    location.href = `mailto:info@3h-i.com?subject=${encodeURIComponent(`New project from ${payload.name}`)}&body=${encodeURIComponent(body)}`;
+  });
+</script>

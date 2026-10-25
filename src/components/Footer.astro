@@ -1,0 +1,108 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <div class="foot__top wrap">
+    <p class="foot__line">
+      A new wave agency for brands that want to be <em class="serif">found</em>, chosen and
+      remembered.
+    </p>
+    <nav class="foot__nav" aria-label="Footer">
+      {nav.map((l) => (
+        <a href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+    <div class="foot__contact">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a href={site.social.linkedin} rel="noopener" target="_blank">
+        LinkedIn
+      </a>
+      <a href={site.social.instagram} rel="noopener" target="_blank">
+        Instagram
+      </a>
+    </div>
+  </div>
+
+  <div class="foot__mark" aria-hidden="true">
+    <div data-speed="-0.1">
+      <Logo />
+    </div>
+  </div>
+
+  <div class="foot__base wrap mono">
+    <span>
+      &copy; {year} {site.name}
+    </span>
+    <span>Los Angeles / New York</span>
+    <a href="https://www.3h-i.com/accessibility-statement">Accessibility</a>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    position: relative;
+    background: var(--ink);
+    color: var(--paper);
+    padding-top: clamp(64px, 8vw, 120px);
+    overflow: hidden;
+  }
+  .foot__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) 1fr 1fr;
+    gap: 32px;
+  }
+  .foot__line {
+    max-width: 22ch;
+    font-size: clamp(24px, 2.4vw, 40px);
+    font-weight: 550;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+  .foot__nav,
+  .foot__contact {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+  }
+  .foot a {
+    text-decoration: none;
+    opacity: 0.85;
+    transition:
+      opacity 0.3s,
+      color 0.3s;
+  }
+  .foot a:hover {
+    opacity: 1;
+    color: var(--pink);
+  }
+  .foot__mark {
+    padding-top: clamp(72px, 9vw, 140px);
+    font-size: clamp(64px, 16vw, 290px);
+    line-height: 0.8;
+    display: flex;
+    justify-content: center;
+    margin-bottom: -0.08em;
+  }
+  .foot__base {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 22px;
+    border-top: 1px solid rgba(242, 240, 235, 0.16);
+    font-size: 11px;
+    background: var(--ink);
+  }
+  @media (max-width: 800px) {
+    .foot__top {
+      grid-template-columns: 1fr 1fr;
+    }
+    .foot__line {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
