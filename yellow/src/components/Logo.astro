@@ -1,0 +1,32 @@
+---
+// The official 3H-i logo (src/assets/logo.svg), inlined so the wordmark
+// can follow the text colour (black on light, white on dark) while the
+// "3" keeps its yellow.
+import raw from '../assets/logo.svg?raw';
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: cls = '', label = '3 Horizons Interactive' } = Astro.props;
+
+const svg = raw
+  .replace(/\s(width|height)="[^"]*"/g, '')
+  .replace(/#000000/g, 'currentColor')
+  .replace(/#fed602/g, 'var(--yellow)')
+  .replace('<svg ', `<svg role="img" aria-label="${label}" `);
+---
+
+<span class:list={['logo', cls]} set:html={svg} />
+
+<style>
+  .logo {
+    display: inline-flex;
+    line-height: 0;
+  }
+  .logo :global(svg) {
+    width: auto;
+    height: 1em;
+    overflow: visible;
+  }
+</style>

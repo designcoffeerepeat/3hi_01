@@ -1,10 +1,14 @@
-# Builds the site and publishes it to GitHub Pages on every push to main.
+# Builds both sites and publishes them to GitHub Pages on every push to main:
+#   /           the Vite site (repo root)
+#   /yellow/    the yellow Astro site (yellow/ folder)
+# Pull requests run the same build as a check, without deploying.
 # One-time setup: repo Settings > Pages > Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -13,7 +17,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'main' }}
   cancel-in-progress: true
 
 jobs:
@@ -25,16 +29,27 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            yellow/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - run: npm run build
+      - name: Build the yellow site into dist/yellow
+        working-directory: yellow
         env:
-          # Serve from the repository sub-path on GitHub Pages.
-          BASE_PATH: /${{ github.event.repository.name }}/
+          BASE_PATH: /${{ github.event.repository.name }}/yellow/
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+        run: |
+          npm ci
+          npm run build
+          cp -r dist ../dist/yellow
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

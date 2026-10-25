@@ -1,0 +1,86 @@
+---
+import { clients } from '../data/site';
+const rows = [clients, [...clients.slice(6), ...clients.slice(0, 6)]];
+---
+
+<section class="clients" aria-labelledby="clients-title">
+  <h2 class="clients__title wrap" id="clients-title" data-reveal>
+    You've probably bumped into <span class="mark">some</span> of our work.
+  </h2>
+  {rows.map((row, r) => (
+    <div class={`marquee marquee--${r ? 'rev' : 'fwd'}`} aria-hidden={r ? 'true' : undefined}>
+      <ul class="marquee__track">
+        {[...row, ...row].map((name, i) => (
+          <li aria-hidden={i >= row.length ? 'true' : undefined}>
+            {name}
+            <span class="marquee__dot" aria-hidden="true" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</section>
+
+<style>
+  .clients {
+    padding-block: clamp(64px, 9vw, 140px);
+    background: var(--ink);
+    color: var(--white);
+    overflow: hidden;
+  }
+  .clients__title {
+    max-width: 22ch;
+    margin-bottom: clamp(32px, 4vw, 64px);
+    font-size: clamp(28px, 3.6vw, 60px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .marquee {
+    display: flex;
+    /* lean slightly with scroll speed */
+    transform: skewX(calc(var(--velocity, 0) * -0.4deg));
+  }
+  .marquee__track {
+    display: flex;
+    flex-shrink: 0;
+    animation: marquee 40s linear infinite;
+  }
+  .marquee--rev .marquee__track {
+    animation-direction: reverse;
+    animation-duration: 48s;
+  }
+  .marquee li {
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 2.4vw, 40px);
+    padding-right: clamp(20px, 2.4vw, 40px);
+    font-size: clamp(40px, 6vw, 104px);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 1.12;
+    color: var(--yellow);
+    white-space: nowrap;
+  }
+  .marquee--rev li {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--white);
+  }
+  .marquee__dot {
+    width: 0.32em;
+    height: 0.32em;
+    border-radius: 50%;
+    background: var(--white);
+  }
+  .marquee--rev .marquee__dot {
+    background: var(--yellow);
+  }
+  .clients:hover .marquee__track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

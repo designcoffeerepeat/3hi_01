@@ -1,0 +1,236 @@
+---
+import { site } from '../data/site';
+const chips = [
+  { label: 'AI integration', x: '50%', y: '24%', r: -8, s: '-0.35' },
+  { label: 'SEO', x: '90%', y: '20%', r: 10, s: '-0.2' },
+  { label: 'UX/UI web design', x: '64%', y: '72%', r: 6, s: '-0.45' },
+  { label: 'Social media', x: '88%', y: '60%', r: -6, s: '-0.28' },
+  { label: 'Growth marketing', x: '34%', y: '18%', r: 4, s: '-0.15' },
+];
+---
+
+<section class="hero" id="top">
+  <canvas class="hero__canvas" aria-hidden="true" data-hero-canvas></canvas>
+
+  <ul class="hero__chips" aria-hidden="true">
+    {chips.map((c, i) => (
+      <li
+        data-speed={c.s}
+        style={`left:${c.x};top:${c.y};--r:${c.r}deg;--i:${i}`}
+        class={i % 2 ? 'chip--dark' : ''}
+      >
+        <span>{c.label}</span>
+      </li>
+    ))}
+  </ul>
+
+  <div class="hero__top wrap">
+    <p class="eyebrow">New wave digital agency</p>
+    <p class="hero__where mono">Los Angeles / New York</p>
+  </div>
+
+  <div class="hero__body wrap">
+    <h1 class="display hero__title">
+      <span class="sr-only">{site.tagline}</span>
+      <span class="hero__kicker" aria-hidden="true">
+        <span>It's time to</span>
+      </span>
+      <span class="hero__line" aria-hidden="true">
+        <span>take your place</span>
+      </span>
+      <span class="hero__line" aria-hidden="true">
+        <span>
+          at the <span class="mark hero__mark">top.</span>
+        </span>
+      </span>
+    </h1>
+
+    <div class="hero__foot">
+      <p class="hero__lede">
+        AI, web design, social and search working as one system, so your brand climbs and stays
+        there.
+      </p>
+      <div class="hero__ctas">
+        <a href="#scan" class="btn">
+          <span class="btn__dot" aria-hidden="true"></span>Does AI recommend you?
+        </a>
+        <a href="#contact" class="btn btn--ghost">
+          Talk to us
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-block: 104px 40px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero__top,
+  .hero__body {
+    position: relative;
+    pointer-events: none;
+  }
+  .hero__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .hero__body a {
+    pointer-events: auto;
+  }
+  .hero__title {
+    display: grid;
+    margin-block: 40px clamp(24px, 3vw, 44px);
+  }
+  .hero__kicker,
+  .hero__line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+  .hero__kicker {
+    font-size: 0.34em;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .hero__kicker > span,
+  .hero__line > span {
+    display: inline-block;
+    animation: rise 1.2s var(--ease) both;
+  }
+  .hero__line:nth-child(3) > span {
+    animation-delay: 0.08s;
+  }
+  .hero__line:nth-child(4) > span {
+    animation-delay: 0.16s;
+  }
+  .hero__mark {
+    --mark: 0;
+  }
+  .hero__mark::before {
+    animation: mark-in 0.9s 0.9s var(--ease) forwards;
+  }
+  .hero__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    animation: fade 1s 0.5s var(--ease) both;
+  }
+  .hero__lede {
+    max-width: 30ch;
+    font-size: clamp(18px, 1.45vw, 23px);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Floating service chips, each drifting at its own parallax speed. */
+  .hero__chips {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .hero__chips li {
+    position: absolute;
+    z-index: 1;
+    animation: chip-in 0.9s var(--spring) both;
+    animation-delay: calc(0.6s + var(--i) * 0.09s);
+  }
+  .hero__chips span {
+    display: block;
+    padding: 12px 20px;
+    border-radius: 999px;
+    background: var(--yellow);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: clamp(14px, 1.1vw, 18px);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    transform: rotate(var(--r));
+    box-shadow: 0 14px 30px -14px rgba(11, 11, 11, 0.45);
+  }
+  .hero__chips .chip--dark span {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(105%);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes chip-in {
+    from {
+      opacity: 0;
+      scale: 0.4;
+    }
+  }
+  @keyframes mark-in {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero__chips li:nth-child(n + 4) {
+      display: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .hero {
+      padding-top: 88px;
+    }
+    .hero__title {
+      font-size: clamp(46px, 13.6vw, 84px);
+    }
+    .hero__where {
+      display: none;
+    }
+    .hero__chips li:nth-child(1) {
+      left: 5% !important;
+      top: 40% !important;
+    }
+    .hero__chips li:nth-child(2) {
+      left: 70% !important;
+      top: 15% !important;
+    }
+    .hero__chips li:nth-child(3) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { hasWebGL } from '../scripts/webgl';
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  if (canvas && hasWebGL()) {
+    import('../scripts/three/hero').then(({ mountHero }) => mountHero(canvas));
+  }
+</script>
