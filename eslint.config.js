@@ -2,7 +2,8 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**'] },
+  // yellow/ is a separate Astro site with its own tooling.
+  { ignores: ['dist/**', 'node_modules/**', 'yellow/**'] },
   js.configs.recommended,
   {
     files: ['**/*.js'],

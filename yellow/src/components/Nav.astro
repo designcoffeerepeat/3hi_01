@@ -1,0 +1,201 @@
+---
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+---
+
+<header class="nav" data-nav>
+  <a href="#top" class="nav__logo">
+    <Logo label={`${site.name}, back to top`} />
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    {nav.map((l) => (
+      <a href={l.href}>{l.label}</a>
+    ))}
+  </nav>
+  <a href="#scan" class="btn nav__cta">
+    <span class="btn__dot" aria-hidden="true"></span>Scan my site
+  </a>
+  <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu">
+    <span class="sr-only">Menu</span>
+    <i></i>
+    <i></i>
+  </button>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <nav aria-label="Mobile">
+    {nav.map((l, i) => (
+      <a href={l.href} style={`--i:${i}`}>
+        <span class="mono">0{i + 1}</span>
+        {l.label}
+      </a>
+    ))}
+  </nav>
+  <div class="menu__foot mono">
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+    <span>Los Angeles / New York</span>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 14px var(--gutter) auto;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 8px 8px 8px 20px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--white) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    box-shadow: 0 0 0 1px var(--line);
+    transition: transform 0.6s var(--ease);
+  }
+  .nav.is-hidden {
+    transform: translateY(-140%);
+  }
+  .nav__logo {
+    font-size: 40px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav__links {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .nav__links a {
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.3s;
+  }
+  .nav__links a:hover {
+    background: var(--yellow);
+  }
+  .nav__cta {
+    min-height: 44px;
+    font-size: 15px;
+  }
+  .nav__burger {
+    display: none;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    border: 0;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    position: relative;
+  }
+  .nav__burger i {
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    height: 2px;
+    background: var(--white);
+    transition: transform 0.4s var(--ease);
+  }
+  .nav__burger i:first-of-type {
+    top: 18px;
+  }
+  .nav__burger i:last-of-type {
+    top: 24px;
+  }
+  .nav__burger[aria-expanded='true'] i:first-of-type {
+    transform: translateY(3px) rotate(45deg);
+  }
+  .nav__burger[aria-expanded='true'] i:last-of-type {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 110px var(--gutter) 32px;
+    background: var(--yellow);
+    color: var(--ink);
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu nav {
+    display: grid;
+  }
+  .menu nav a {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 6px 0;
+    font-size: clamp(40px, 11vw, 72px);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    text-decoration: none;
+    animation: menu-in 0.7s var(--ease) both;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+  .menu nav .mono {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  .menu__foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .nav__links,
+    .nav__cta {
+      display: none;
+    }
+    .nav__burger {
+      display: block;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+  const burger = nav.querySelector<HTMLButtonElement>('.nav__burger')!;
+  const menu = document.getElementById('menu')!;
+
+  const setMenu = (open: boolean) => {
+    burger.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  };
+  burger.addEventListener('click', () => setMenu(menu.hidden));
+  menu.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setMenu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) setMenu(false);
+  });
+
+  // Tuck the bar away while scrolling down, bring it back on the way up.
+  let last = 0;
+  addEventListener(
+    'scroll',
+    () => {
+      const y = scrollY;
+      nav.classList.toggle('is-hidden', y > last && y > 400 && menu.hidden);
+      last = y;
+    },
+    { passive: true }
+  );
+</script>

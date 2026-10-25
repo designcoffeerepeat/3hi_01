@@ -4,6 +4,10 @@ The new marketing site for **3 Horizons Interactive (3H-i)**, a new wave digital
 
 Built with [Vite](https://vite.dev), [Three.js](https://threejs.org), [GSAP](https://gsap.com) (ScrollTrigger and SplitText) and [Lenis](https://lenis.darkroom.engineering) smooth scrolling. There is no framework: just semantic HTML, modern CSS and small ES modules.
 
+## Yellow design
+
+A separate yellow (#ffd600) design built with Astro lives in [`yellow/`](yellow/), with its own `package.json` and README. The Pages workflow builds both sites: this one at the root and the yellow one at `/yellow/`.
+
 ## Quick start (VS Code)
 
 1. Install [Node.js](https://nodejs.org) 20 or newer.
